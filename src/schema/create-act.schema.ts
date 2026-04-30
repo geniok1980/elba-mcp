@@ -18,4 +18,16 @@ export const createActPayloadSchema = z
     placeholderItems: z.array(placeholderItemToCreateSchema).nullable().optional(),
     warehouseItems: z.array(actItemToCreateSchema).nullable().optional()
   })
-  .strict();
+  .strict()
+  .superRefine((value, ctx) => {
+    if (value.withNDS !== false || !value.warehouseItems) return;
+    value.warehouseItems.forEach((item, index) => {
+      if (item.ndsRate !== null && item.ndsRate !== undefined) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["warehouseItems", index, "ndsRate"],
+          message: "When withNDS is false, ndsRate must be null."
+        });
+      }
+    });
+  });

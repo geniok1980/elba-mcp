@@ -101,10 +101,10 @@ export const actItemToCreateSchema = z
   .object({
     productName: z.string().min(1).max(2000),
     unitName: z.string().min(1).max(1000),
-    quantity: decimalStringSchema,
-    price: decimalStringSchema.nullable().optional(),
+    quantity: z.number().nonnegative(),
+    price: z.number().nonnegative().nullable().optional(),
     ndsRate: ndsRateToSaveSchema.nullable().optional(),
-    discount: decimalStringSchema.nullable().optional()
+    discount: z.number().min(0).max(100).nullable().optional()
   })
   .strict();
 
